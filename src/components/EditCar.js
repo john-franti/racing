@@ -8,7 +8,7 @@ class EditCar extends React.Component {
   };
   handleSelectCar = e => {
     console.log(e.target.value);
-    this.setState({ makeModel: e.target.value });
+    this.setState({ car: JSON.parse(e.target.value) });
   };
   handleChangeLow = t => {
     this.setState({ lowFuel: t.target.value });
@@ -17,8 +17,8 @@ class EditCar extends React.Component {
     this.setState({ highFuel: t.target.value });
   };
   setCar = () => {
-      this.props.onUpdateCar({ makeModel: this.state.makeModel})
-  }
+    this.props.onUpdateCar({ ...this.state });
+  };
   render() {
     return (
       <div className="card card col-sm-4">
@@ -27,9 +27,10 @@ class EditCar extends React.Component {
           <label>Select Car</label>
           <select style={{ width: "85%" }} onChange={this.handleSelectCar}>
             {this.props.roster.map((car, index) => {
+            //   console.log(car);
               return (
-                <option key={index} value={car}>
-                  {car}
+                <option key={index} value={JSON.stringify(car)}>
+                  {car.makeModel}
                 </option>
               );
             })}

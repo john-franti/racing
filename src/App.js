@@ -16,14 +16,14 @@ class App extends React.Component {
       // driversReady: false,
       driversReady: true,
       // drivers: [],
-      car: {
+      driver: {
         fuelCapacity: 105,
         zeroFuelLaptime: 62376,
         driverName: `Kima Kahhinen`,
         image: Faker.image.image(),
         weightCost: 30,
         burnRate: 2.35,
-        makeModel: _.sample(ROSTER.cars),
+        car: _.sample(ROSTER.cars),
         liveryColor: _.sample([
           "blue",
           "red",
@@ -39,42 +39,11 @@ class App extends React.Component {
   }
 
   updateCar = c => {
-    this.setState({car: Object.assign({...this.state.car},{makeModel: c.makeModel})});
-  };
-
-  setCars = n => {
-    let driversArray = [];
-    for (let i = 0; i < n; i++) {
-      const newCar = {
-        fuelCapacity: _.sample([95, 105, 115]),
-        zeroFuelLaptime: Math.floor(
-          Math.random() * (62000 - 59000 + 1) + 59000
-        ),
-        driverName: `${Faker.name.firstName()} ${Faker.name.lastName()}`,
-        image: Faker.image.image(),
-        makeModel: _.sample(ROSTER.cars),
-        weightCost: 30,
-        burnRate: 2.35,
-        liveryColor: _.sample([
-          "blue",
-          "red",
-          "silver",
-          "grey",
-          "green",
-          "orange",
-          "purple"
-        ])
-      };
-      driversArray.push(newCar);
-    }
-    this.setState(() => {
-      let sortedArray = driversArray.sort((a, b) => {
-        return a.zeroFuelLaptime > b.zeroFuelLaptime ? 1 : -1;
-      });
-      return {
-        driversReady: true,
-        drivers: sortedArray
-      };
+    console.log(c)
+    this.setState(prevState=> {
+      let newDriver = prevState.driver;
+      newDriver.car = c;
+      return {driver: newDriver}
     });
   };
 
@@ -85,7 +54,7 @@ class App extends React.Component {
 
   showDrivers = () => {
     // return this.state.cars.map((driver, index) => {
-    return <Car car={this.state.car} race={this.state.race} />;
+    return <Car driver={this.state.driver} race={this.state.race} />;
     // });
   };
 
@@ -102,7 +71,7 @@ class App extends React.Component {
                 <EditCar
                   onUpdateCar={this.updateCar}
                   roster={ROSTER.cars}
-                  car={this.state.car}
+                  car={this.state.driver.car}
                 />
                 {this.showDrivers()}
               </div>
