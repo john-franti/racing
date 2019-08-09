@@ -2,20 +2,45 @@ import React from "react";
 import "./App.css";
 import Car from "./components/Car";
 import DriversForm from "./components/DriversForm";
-import ROSTER from "./assets/roster";
+import ROSTER from "./assets/ROSTER";
 import _ from "lodash";
 import Faker from "faker";
 import RaceDataForm from "./components/RaceDataForm";
+import EditCar from "./components/EditCar";
+import { throwStatement } from "@babel/types";
 
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      driversReady: false,
-      drivers: [],
-      race: { laps: 55, pitTime: 22 }
+      // driversReady: false,
+      driversReady: true,
+      // drivers: [],
+      car: {
+        fuelCapacity: 105,
+        zeroFuelLaptime: 62376,
+        driverName: `Kima Kahhinen`,
+        image: Faker.image.image(),
+        weightCost: 30,
+        burnRate: 2.35,
+        makeModel: _.sample(ROSTER.cars),
+        liveryColor: _.sample([
+          "blue",
+          "red",
+          "silver",
+          "grey",
+          "green",
+          "orange",
+          "purple"
+        ])
+      },
+      race: { laps: 55, pitTime: 22000 }
     };
   }
+
+  updateCar = c => {
+    this.setState({car: Object.assign({...this.state.car},{makeModel: c.makeModel})});
+  };
 
   setCars = n => {
     let driversArray = [];
@@ -28,6 +53,8 @@ class App extends React.Component {
         driverName: `${Faker.name.firstName()} ${Faker.name.lastName()}`,
         image: Faker.image.image(),
         makeModel: _.sample(ROSTER.cars),
+        weightCost: 30,
+        burnRate: 2.35,
         liveryColor: _.sample([
           "blue",
           "red",
@@ -51,21 +78,34 @@ class App extends React.Component {
     });
   };
 
+  updateRace = r => {
+    console.log("updating race", r);
+    this.setState({ race: r });
+  };
+
   showDrivers = () => {
-    return this.state.drivers.map((driver, index) => {
-      return <Car key={index} car={driver} />;
-    });
+    // return this.state.cars.map((driver, index) => {
+    return <Car car={this.state.car} race={this.state.race} />;
+    // });
   };
 
   render() {
     return (
       <div className="App">
         <h1>Race Strategy App</h1>
-        <RaceDataForm data={this.state.race} />
+        <RaceDataForm race={this.state.race} onUpdateRace={this.updateRace} />
         <div>
           {this.state.driversReady ? (
             <div className="container">
-              <div className="row">{this.showDrivers()}</div>
+              {/* <p>Click on Driver to Edit</p> */}
+              <div className="row">
+                <EditCar
+                  onUpdateCar={this.updateCar}
+                  roster={ROSTER.cars}
+                  car={this.state.car}
+                />
+                {this.showDrivers()}
+              </div>
             </div>
           ) : (
             <DriversForm onSetCars={this.setCars} />
